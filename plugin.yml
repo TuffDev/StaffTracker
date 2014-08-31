@@ -1,8 +1,9 @@
 ---
 name: StaffTracker
 main: StaffTracker\main
-version: 0.0.1
+author: TuffDev/roboroug2
+version: 0.1.1
 api: [1.0.0]
-description: Plugin for Pocketmine API 1.0.0 
-website: none
+description: Track your OPs or Staff command usage.
+website: http://github.com/TuffDev
 commands: none
