@@ -1,0 +1,8 @@
+---
+name: StaffTracker
+main: StaffTracker\main
+version: 0.0.1
+api: [1.0.0]
+description: Plugin for Pocketmine API 1.0.0 
+website: none
+commands: none

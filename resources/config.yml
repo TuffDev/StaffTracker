@@ -1,0 +1,14 @@
+#####################
+### Staff Tracker ###
+###  by TuffDev   ###
+#####################
+####Enable  MYSQL####
+#####################
+Enable MySQL: false
+#####################
+MySQL Details:
+ host: "127.0.0.1"
+ user: "root"
+ password: ""
+ database: "imcpe"
+#####################
