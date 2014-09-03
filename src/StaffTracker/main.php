@@ -123,9 +123,9 @@ class Main extends PluginBase implements Listener{
 		$this->config->save();
 		$this->log->save();
 		
-        if($this->getConfig()->get("Enable MySQL") == true){
-		$this->getLogger()->info("Closing MySQL Connection ...");
-		@mysqli_close($this->db);
+		if($this->getConfig()->get("Enable MySQL") == true){
+			$this->getLogger()->info("Closing MySQL Connection ...");
+			@mysqli_close($this->db);
 		}
 		
 		$this->getLogger()->info(TextFormat::DARK_BLUE . "StaffTracker Disabled!");
