@@ -90,7 +90,7 @@ class Main extends PluginBase implements Listener{
 		$message = $commandarray[0];
 		$player = $event->getPlayer()->getName();
 		$time1 = intval(time());
-		$time = date("m-d-Y", $time1);
+		$time = date("m-d-Y H:i:s", $time1);
 		
 		if($this->getConfig()->get("Enable MySQL") == true){
 			if ($event->getPlayer()->isOp()) {
