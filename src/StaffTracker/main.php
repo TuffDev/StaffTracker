@@ -53,19 +53,19 @@ class Main extends PluginBase implements Listener{
 					$this->getLogger()->info("Disabled MySQL option.");
 				}
 				else{
-					$exists_table_stafftracker = mysqli_query($this->db, "SELECT * FROM stafftracker LIMIT 0");
+					$exists_table_stafftracker = @mysqli_query($this->db, "SELECT * FROM stafftracker LIMIT 0");
 
 					if(!$exists_table_stafftracker){
 					$this->getLogger()->critical("StaffTracker table doesnt exist.");
 					$this->getLogger()->info("Generating table ...");
 					
 					$sql= "CREATE TABLE IF NOT EXISTS stafftracker(
-						username		VARCHAR(30) NOT NULL,
+						username		VARCHAR NOT NULL,
 						cmd			TEXT NOT NULL,
-						time			INT NOT NULL
+						time			VARCHAR NOT NULL
 						) ENGINE=INNODB;";
 					
-						if (mysqli_query($this->db,$sql)) {
+						if (@mysqli_query($this->db,$sql)) {
 							$this->getLogger()->info(TextFormat::YELLOW ."Successfully created \"stafftracker\" table!");
 						}
 						else {
@@ -90,14 +90,14 @@ class Main extends PluginBase implements Listener{
 		$message = $commandarray[0];
 		$player = $event->getPlayer()->getName();
 		$time1 = intval(time());
-		$time = date("Y/m/d", $time1);
+		$time = date("m-d-Y", $time1);
 		
 		if($this->getConfig()->get("Enable MySQL") == true){
 			if ($event->getPlayer()->isOp()) {
 				if ($message === "/kick" or $message == "/ban" or $message == "/banip") {
 
 					$execute_query = "INSERT INTO stafftracker(username, cmd, time)VALUES('$player', '$command', '$time')";
-					mysqli_query($this->db, $execute_query);
+					@mysqli_query($this->db, $execute_query);
 					
 						$this->log->set($time, "Player: " . $player . " | cmd: " . $command);
 						$this->log->save();
@@ -107,7 +107,7 @@ class Main extends PluginBase implements Listener{
 		}
 		else{
 			if ($event->getPlayer()->isOp()) {
-				if ($message == "/kick" or $message == "/ban" or $message == "/banip") {
+				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip") {
 						$this->log->set($time, "Player: " . $player . " | cmd: " . $command);
 						$this->log->save();
 						$this->log->getAll();
