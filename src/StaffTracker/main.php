@@ -17,22 +17,24 @@ class Main extends PluginBase implements Listener{
     public function onEnable(){
 
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-        	$this->saveDefaultConfig();
+		$this->saveDefaultConfig();
 		$this->reloadConfig();
 		$this->config = new Config($this->getDataFolder(). "config.yml", Config::YAML);
 		$this->log = new Config($this->getDataFolder(). "logs.yml", Config::YAML);
 		
 		$mysql = $this->config->get("MySQL Details");
 		$mysql_hostname = $mysql["host"];
+		$mysql_port = $mysql["port"];
 		$mysql_user = $mysql["user"];
 		$mysql_password = $mysql["password"];
 		$mysql_database = $mysql["database"];
 
 		if($this->getConfig()->get("Enable MySQL") == true){
 			$this->getLogger()->info("Connecting to MySQL Database ...");
-			$db = @mysqli_connect($mysql_hostname, $mysql_user, $mysql_password, $mysql_database);
+			$this->db = @mysqli_connect($mysql_hostname, $mysql_user, $mysql_password, $mysql_database, $mysql_port);
+			$this->db_check = @fsockopen($mysql_hostname, $mysql_port, $errno, $errstr, 5);
 
-			if (mysqli_connect_errno($db))
+			if (!$this->db_check)
 			{
 				$this->getLogger()->critical("Cant find MySQL Server running.");
 				$this->getLogger()->critical("Disabling MySQL option.");
@@ -42,8 +44,8 @@ class Main extends PluginBase implements Listener{
 				$this->getLogger()->info("Disabled MySQL option.");
 			}
 			else{
-				if(!$db){
-					$this->getLogger()->critical("Invalid MySQL settings!");
+				if(!$this->db){
+					$this->getLogger()->critical("Invalid MySQL Details!");
 					$this->getLogger()->critical("Disabling MySQL option.");
 					$this->config->set("Enable MySQL", false);
 					$this->config->save();
@@ -51,7 +53,7 @@ class Main extends PluginBase implements Listener{
 					$this->getLogger()->info("Disabled MySQL option.");
 				}
 				else{
-					$exists_table_stafftracker = mysqli_query($db, "SELECT * FROM stafftracker LIMIT 0");
+					$exists_table_stafftracker = mysqli_query($this->db, "SELECT * FROM stafftracker LIMIT 0");
 
 					if(!$exists_table_stafftracker){
 					$this->getLogger()->critical("StaffTracker table doesnt exist.");
@@ -63,7 +65,7 @@ class Main extends PluginBase implements Listener{
 						time			INT NOT NULL
 						) ENGINE=INNODB;";
 					
-						if (mysqli_query($db,$sql)) {
+						if (mysqli_query($this->db,$sql)) {
 							$this->getLogger()->info(TextFormat::YELLOW ."Successfully created \"stafftracker\" table!");
 						}
 						else {
@@ -87,23 +89,17 @@ class Main extends PluginBase implements Listener{
 		$commandarray = explode(' ',trim($command));
 		$message = $commandarray[0];
 		$player = $event->getPlayer()->getName();
-		$time = intval(time());
+		$time1 = intval(time());
+		$time = date("Y/m/d", $time1);
 		
 		if($this->getConfig()->get("Enable MySQL") == true){
 			if ($event->getPlayer()->isOp()) {
 				if ($message === "/kick" or $message == "/ban" or $message == "/banip") {
-				
-					$mysql = $this->config->get("MySQL Details");
-					$mysql_hostname = $mysql["host"];
-					$mysql_user = $mysql["user"];
-					$mysql_password = $mysql["password"];
-					$mysql_database = $mysql["database"];
-			
-					$db = @mysqli_connect($mysql_hostname, $mysql_user, $mysql_password, $mysql_database);
+
 					$execute_query = "INSERT INTO stafftracker(username, cmd, time)VALUES('$player', '$command', '$time')";
-					mysqli_query($db, $execute_query);
+					mysqli_query($this->db, $execute_query);
 					
-						$this->log->set($player, $command . " " . $time);
+						$this->log->set($time, "Player: " . $player . " | cmd: " . $command);
 						$this->log->save();
 						$this->log->getAll();
 				}
@@ -112,7 +108,7 @@ class Main extends PluginBase implements Listener{
 		else{
 			if ($event->getPlayer()->isOp()) {
 				if ($message == "/kick" or $message == "/ban" or $message == "/banip") {
-						$this->log->set($player, $command . " " . $time);
+						$this->log->set($time, "Player: " . $player . " | cmd: " . $command);
 						$this->log->save();
 						$this->log->getAll();
 				}
@@ -122,10 +118,17 @@ class Main extends PluginBase implements Listener{
 	
     public function onDisable(){
 	
-        	$this->config->getAll();
+		$this->config->getAll();
 		$this->log->getAll();
 		$this->config->save();
 		$this->log->save();
-        
+		
+        if($this->getConfig()->get("Enable MySQL") == true){
+		$this->getLogger()->info("Closing MySQL Connection ...");
+		@mysqli_close($this->db);
+		}
+		
 		$this->getLogger()->info(TextFormat::DARK_BLUE . "StaffTracker Disabled!");
     }
+
+}
