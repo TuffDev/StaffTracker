@@ -60,9 +60,9 @@ class Main extends PluginBase implements Listener{
 					$this->getLogger()->info("Generating table ...");
 					
 					$sql= "CREATE TABLE IF NOT EXISTS stafftracker(
-						username		VARCHAR NOT NULL,
+						username		VARCHAR(30) NOT NULL,
 						cmd			TEXT NOT NULL,
-						time			VARCHAR NOT NULL
+						time			TEXT NOT NULL
 						) ENGINE=INNODB;";
 					
 						if (@mysqli_query($this->db,$sql)) {
