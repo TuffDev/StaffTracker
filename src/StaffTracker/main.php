@@ -94,7 +94,7 @@ class Main extends PluginBase implements Listener{
 		
 		if($this->getConfig()->get("Enable MySQL") == true){
 			if ($event->getPlayer()->isOp()) {
-				if ($message === "/kick" or $message == "/ban" or $message == "/banip") {
+				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip") {
 
 					$execute_query = "INSERT INTO stafftracker(username, cmd, time)VALUES('$player', '$command', '$time')";
 					@mysqli_query($this->db, $execute_query);
