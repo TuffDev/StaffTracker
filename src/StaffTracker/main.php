@@ -92,7 +92,6 @@ class Main extends PluginBase implements Listener{
 		$time1 = intval(time());
 		$time = date("m-d-Y H:i:s", $time1);
 		
-		if($this->getConfig()->get("Enable MySQL") == true){
 			if ($event->getPlayer()->isOp()) {
 				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip") {
 
@@ -104,16 +103,13 @@ class Main extends PluginBase implements Listener{
 						$this->log->getAll();
 				}
 			}
-		}
 		else{
-			if ($event->getPlayer()->isOp()) {
 				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip") {
 						$this->log->set($time, "Player: " . $player . " | cmd: " . $command);
 						$this->log->save();
 						$this->log->getAll();
 				}
 			}
-		}
 	}
 	
     public function onDisable(){
