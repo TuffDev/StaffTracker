@@ -93,7 +93,7 @@ class Main extends PluginBase implements Listener{
 		$time = date("m-d-Y H:i:s", $time1);
 		
 			if ($event->getPlayer()->isOp()) {
-				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip" or $message == "/stop" or $message == "/op") {
+				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip" or $message == "/stop" or $message == "/op" or $message == "/deop" or $message == "/give") {
 
 					$execute_query = "INSERT INTO stafftracker(username, cmd, time)VALUES('$player', '$command', '$time')";
 					@mysqli_query($this->db, $execute_query);
@@ -104,8 +104,8 @@ class Main extends PluginBase implements Listener{
 				}
 			}
 		else{
-				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip" or $message == "/stop" or $message == "/op") {
-						$this->log->set($time, "Player: " . $player . " | cmd: " . $command);
+				if ($message == "/kick" or $message == "/ban" or $message == "/banip" or $message == "/pardon" or $message == "/pardon-ip" or $message == "/stop" or $message == "/op" or $message == "/deop" or $message == "/give") {
+						$this->log->set($time, "The player: " . $player . " | The command: " . $command);
 						$this->log->save();
 						$this->log->getAll();
 				}
