@@ -32,9 +32,9 @@ class Main extends PluginBase implements Listener{
 		if($this->getConfig()->get("Enable MySQL") == true){
 			$this->getLogger()->info("Connecting to MySQL Database ...");
 			$this->db = @mysqli_connect($mysql_hostname, $mysql_user, $mysql_password, $mysql_database, $mysql_port);
-			$this->db_check = @fsockopen($mysql_hostname, $mysql_port, $errno, $errstr, 5);
+			$db_check = @fsockopen($mysql_hostname, $mysql_port, $errno, $errstr, 5);
 
-			if (!$this->db_check)
+			if (!$db_check)
 			{
 				$this->getLogger()->critical("Cant find MySQL Server running.");
 				$this->getLogger()->critical("Disabling MySQL option.");
@@ -44,6 +44,7 @@ class Main extends PluginBase implements Listener{
 				$this->getLogger()->info("Disabled MySQL option.");
 			}
 			else{
+				fclose($db_check);
 				if(!$this->db){
 					$this->getLogger()->critical("Invalid MySQL Details!");
 					$this->getLogger()->critical("Disabling MySQL option.");
